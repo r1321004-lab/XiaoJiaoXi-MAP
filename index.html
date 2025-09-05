@@ -1,0 +1,776 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
+        <link rel="stylesheet" href="css/qgis2web.css">
+        <link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/leaflet.photon.css">
+        <link rel="stylesheet" href="css/leaflet-measure.css">
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/L.Control.Layers.Tree.min.js"></script>
+        <script src="js/leaflet-svg-shape-markers.min.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet.photon.js"></script>
+        <script src="js/leaflet-measure.js"></script>
+        <script src="data/riverdirection_0.js"></script>
+        <script src="data/COUNTY_MOI_1090820_2.js"></script>
+        <script src="data/XiaoJiaoXiArea_3.js"></script>
+        <script src="data/rpolyi_4.js"></script>
+        <script src="data/rlin_5.js"></script>
+        <script src="data/rlinxiao_6.js"></script>
+        <script src="data/rpolxiao_7.js"></script>
+        <script src="data/AR6_point__8.js"></script>
+        <script src="data/ar6shp_9.js"></script>
+        <script src="data/raingaugestation_10.js"></script>
+        <script>
+        var map = L.map('map', {
+            zoomControl:false, maxZoom:28, minZoom:1
+        }).fitBounds([[24.629920045910882,121.57878797529318],[24.87376465071519,121.94207906433361]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        // remove popup's row if "visible-with-data"
+        function removeEmptyRowsFromPopupContent(content, feature) {
+         var tempDiv = document.createElement('div');
+         tempDiv.innerHTML = content;
+         var rows = tempDiv.querySelectorAll('tr');
+         for (var i = 0; i < rows.length; i++) {
+             var td = rows[i].querySelector('td.visible-with-data');
+             var key = td ? td.id : '';
+             if (td && td.classList.contains('visible-with-data') && feature.properties[key] == null) {
+                 rows[i].parentNode.removeChild(rows[i]);
+             }
+         }
+         return tempDiv.innerHTML;
+        }
+        // add class to format popup if it contains media
+		function addClassToPopupIfMedia(content, popup) {
+			var tempDiv = document.createElement('div');
+			tempDiv.innerHTML = content;
+			if (tempDiv.querySelector('td img')) {
+				popup._contentNode.classList.add('media');
+					// Delay to force the redraw
+					setTimeout(function() {
+						popup.update();
+					}, 10);
+			} else {
+				popup._contentNode.classList.remove('media');
+			}
+		}
+        var zoomControl = L.control.zoom({
+            position: 'topleft'
+        }).addTo(map);
+        var measureControl = new L.Control.Measure({
+            position: 'topleft',
+            primaryLengthUnit: 'meters',
+            secondaryLengthUnit: 'kilometers',
+            primaryAreaUnit: 'sqmeters',
+            secondaryAreaUnit: 'hectares'
+        });
+        measureControl.addTo(map);
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0].innerHTML = '';
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0].className += ' fas fa-ruler';
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+        function pop_riverdirection_0(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['場域'] !== null ? autolinker.link(String(feature.properties['場域']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['x'] !== null ? autolinker.link(String(feature.properties['x']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['y'] !== null ? autolinker.link(String(feature.properties['y']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_riverdirection_0_0() {
+            return {
+                pane: 'pane_riverdirection_0',
+                radius: 12.0,
+                opacity: 1,
+                color: 'rgba(31,120,180,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(31,120,180,1.0)',
+                interactive: false,
+            }
+        }
+        map.createPane('pane_riverdirection_0');
+        map.getPane('pane_riverdirection_0').style.zIndex = 400;
+        map.getPane('pane_riverdirection_0').style['mix-blend-mode'] = 'normal';
+        var layer_riverdirection_0 = new L.geoJson(json_riverdirection_0, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_riverdirection_0',
+            layerName: 'layer_riverdirection_0',
+            pane: 'pane_riverdirection_0',
+            onEachFeature: pop_riverdirection_0,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.shapeMarker(latlng, style_riverdirection_0_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_riverdirection_0);
+        map.createPane('pane_GoogleMaps_1');
+        map.getPane('pane_GoogleMaps_1').style.zIndex = 401;
+        var layer_GoogleMaps_1 = L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+            pane: 'pane_GoogleMaps_1',
+            opacity: 1.0,
+            attribution: '',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 19
+        });
+        layer_GoogleMaps_1;
+        map.addLayer(layer_GoogleMaps_1);
+        function pop_COUNTY_MOI_1090820_2(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['COUNTYID'] !== null ? autolinker.link(String(feature.properties['COUNTYID']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['COUNTYCODE'] !== null ? autolinker.link(String(feature.properties['COUNTYCODE']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['COUNTYNAME'] !== null ? autolinker.link(String(feature.properties['COUNTYNAME']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['COUNTYENG'] !== null ? autolinker.link(String(feature.properties['COUNTYENG']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_COUNTY_MOI_1090820_2_0() {
+            return {
+                pane: 'pane_COUNTY_MOI_1090820_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 1.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+        map.createPane('pane_COUNTY_MOI_1090820_2');
+        map.getPane('pane_COUNTY_MOI_1090820_2').style.zIndex = 402;
+        map.getPane('pane_COUNTY_MOI_1090820_2').style['mix-blend-mode'] = 'normal';
+        var layer_COUNTY_MOI_1090820_2 = new L.geoJson(json_COUNTY_MOI_1090820_2, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_COUNTY_MOI_1090820_2',
+            layerName: 'layer_COUNTY_MOI_1090820_2',
+            pane: 'pane_COUNTY_MOI_1090820_2',
+            onEachFeature: pop_COUNTY_MOI_1090820_2,
+            style: style_COUNTY_MOI_1090820_2_0,
+        });
+        bounds_group.addLayer(layer_COUNTY_MOI_1090820_2);
+        map.addLayer(layer_COUNTY_MOI_1090820_2);
+        function pop_XiaoJiaoXiArea_3(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['id'] !== null ? autolinker.link(String(feature.properties['id']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_XiaoJiaoXiArea_3_0() {
+            return {
+                pane: 'pane_XiaoJiaoXiArea_3',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 3.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(178,223,138,0.6509803921568628)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_XiaoJiaoXiArea_3');
+        map.getPane('pane_XiaoJiaoXiArea_3').style.zIndex = 403;
+        map.getPane('pane_XiaoJiaoXiArea_3').style['mix-blend-mode'] = 'normal';
+        var layer_XiaoJiaoXiArea_3 = new L.geoJson(json_XiaoJiaoXiArea_3, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_XiaoJiaoXiArea_3',
+            layerName: 'layer_XiaoJiaoXiArea_3',
+            pane: 'pane_XiaoJiaoXiArea_3',
+            onEachFeature: pop_XiaoJiaoXiArea_3,
+            style: style_XiaoJiaoXiArea_3_0,
+        });
+        bounds_group.addLayer(layer_XiaoJiaoXiArea_3);
+        map.addLayer(layer_XiaoJiaoXiArea_3);
+        function pop_rpolyi_4(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['RIVER_NAME'] !== null ? autolinker.link(String(feature.properties['RIVER_NAME']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['RIVER_TYPE'] !== null ? autolinker.link(String(feature.properties['RIVER_TYPE']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['RIVER_CODE'] !== null ? autolinker.link(String(feature.properties['RIVER_CODE']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['RIVER_FROM'] !== null ? autolinker.link(String(feature.properties['RIVER_FROM']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_rpolyi_4_0() {
+            return {
+                pane: 'pane_rpolyi_4',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(31,120,180,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_rpolyi_4');
+        map.getPane('pane_rpolyi_4').style.zIndex = 404;
+        map.getPane('pane_rpolyi_4').style['mix-blend-mode'] = 'normal';
+        var layer_rpolyi_4 = new L.geoJson(json_rpolyi_4, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_rpolyi_4',
+            layerName: 'layer_rpolyi_4',
+            pane: 'pane_rpolyi_4',
+            onEachFeature: pop_rpolyi_4,
+            style: style_rpolyi_4_0,
+        });
+        bounds_group.addLayer(layer_rpolyi_4);
+        map.addLayer(layer_rpolyi_4);
+        function pop_rlin_5(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['NAME'] !== null ? autolinker.link(String(feature.properties['NAME']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FROM'] !== null ? autolinker.link(String(feature.properties['FROM']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_rlin_5_0() {
+            return {
+                pane: 'pane_rlin_5',
+                opacity: 1,
+                color: 'rgba(31,120,180,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 1.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+        map.createPane('pane_rlin_5');
+        map.getPane('pane_rlin_5').style.zIndex = 405;
+        map.getPane('pane_rlin_5').style['mix-blend-mode'] = 'normal';
+        var layer_rlin_5 = new L.geoJson(json_rlin_5, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_rlin_5',
+            layerName: 'layer_rlin_5',
+            pane: 'pane_rlin_5',
+            onEachFeature: pop_rlin_5,
+            style: style_rlin_5_0,
+        });
+        bounds_group.addLayer(layer_rlin_5);
+        map.addLayer(layer_rlin_5);
+        function pop_rlinxiao_6(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['NAME'] !== null ? autolinker.link(String(feature.properties['NAME']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FROM'] !== null ? autolinker.link(String(feature.properties['FROM']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_rlinxiao_6_0() {
+            return {
+                pane: 'pane_rlinxiao_6',
+                opacity: 1,
+                color: 'rgba(255,241,0,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 1.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+        map.createPane('pane_rlinxiao_6');
+        map.getPane('pane_rlinxiao_6').style.zIndex = 406;
+        map.getPane('pane_rlinxiao_6').style['mix-blend-mode'] = 'normal';
+        var layer_rlinxiao_6 = new L.geoJson(json_rlinxiao_6, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_rlinxiao_6',
+            layerName: 'layer_rlinxiao_6',
+            pane: 'pane_rlinxiao_6',
+            onEachFeature: pop_rlinxiao_6,
+            style: style_rlinxiao_6_0,
+        });
+        bounds_group.addLayer(layer_rlinxiao_6);
+        map.addLayer(layer_rlinxiao_6);
+        function pop_rpolxiao_7(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['RIVER_NAME'] !== null ? autolinker.link(String(feature.properties['RIVER_NAME']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['RIVER_TYPE'] !== null ? autolinker.link(String(feature.properties['RIVER_TYPE']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['RIVER_CODE'] !== null ? autolinker.link(String(feature.properties['RIVER_CODE']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['RIVER_FROM'] !== null ? autolinker.link(String(feature.properties['RIVER_FROM']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_rpolxiao_7_0() {
+            return {
+                pane: 'pane_rpolxiao_7',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,241,0,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_rpolxiao_7');
+        map.getPane('pane_rpolxiao_7').style.zIndex = 407;
+        map.getPane('pane_rpolxiao_7').style['mix-blend-mode'] = 'normal';
+        var layer_rpolxiao_7 = new L.geoJson(json_rpolxiao_7, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_rpolxiao_7',
+            layerName: 'layer_rpolxiao_7',
+            pane: 'pane_rpolxiao_7',
+            onEachFeature: pop_rpolxiao_7,
+            style: style_rpolxiao_7_0,
+        });
+        bounds_group.addLayer(layer_rpolxiao_7);
+        map.addLayer(layer_rpolxiao_7);
+        function pop_AR6_point__8(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['LON'] !== null ? autolinker.link(String(feature.properties['LON']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['LAT'] !== null ? autolinker.link(String(feature.properties['LAT']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['field_3'] !== null ? autolinker.link(String(feature.properties['field_3']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['field_4'] !== null ? autolinker.link(String(feature.properties['field_4']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['field_5'] !== null ? autolinker.link(String(feature.properties['field_5']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['field_6'] !== null ? autolinker.link(String(feature.properties['field_6']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_AR6_point__8_0() {
+            return {
+                pane: 'pane_AR6_point__8',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(253,191,111,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_AR6_point__8');
+        map.getPane('pane_AR6_point__8').style.zIndex = 408;
+        map.getPane('pane_AR6_point__8').style['mix-blend-mode'] = 'normal';
+        var layer_AR6_point__8 = new L.geoJson(json_AR6_point__8, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_AR6_point__8',
+            layerName: 'layer_AR6_point__8',
+            pane: 'pane_AR6_point__8',
+            onEachFeature: pop_AR6_point__8,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_AR6_point__8_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_AR6_point__8);
+        map.addLayer(layer_AR6_point__8);
+        function pop_ar6shp_9(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['id'] !== null ? autolinker.link(String(feature.properties['id']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_ar6shp_9_0() {
+            return {
+                pane: 'pane_ar6shp_9',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,146,39,0.47843137254901963)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_ar6shp_9');
+        map.getPane('pane_ar6shp_9').style.zIndex = 409;
+        map.getPane('pane_ar6shp_9').style['mix-blend-mode'] = 'normal';
+        var layer_ar6shp_9 = new L.geoJson(json_ar6shp_9, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_ar6shp_9',
+            layerName: 'layer_ar6shp_9',
+            pane: 'pane_ar6shp_9',
+            onEachFeature: pop_ar6shp_9,
+            style: style_ar6shp_9_0,
+        });
+        bounds_group.addLayer(layer_ar6shp_9);
+        map.addLayer(layer_ar6shp_9);
+        function pop_raingaugestation_10(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['name'] !== null ? autolinker.link(String(feature.properties['name']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['x'] !== null ? autolinker.link(String(feature.properties['x']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['y'] !== null ? autolinker.link(String(feature.properties['y']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_raingaugestation_10_0() {
+            return {
+                pane: 'pane_raingaugestation_10',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(227,26,28,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_raingaugestation_10');
+        map.getPane('pane_raingaugestation_10').style.zIndex = 410;
+        map.getPane('pane_raingaugestation_10').style['mix-blend-mode'] = 'normal';
+        var layer_raingaugestation_10 = new L.geoJson(json_raingaugestation_10, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_raingaugestation_10',
+            layerName: 'layer_raingaugestation_10',
+            pane: 'pane_raingaugestation_10',
+            onEachFeature: pop_raingaugestation_10,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_raingaugestation_10_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_raingaugestation_10);
+        map.addLayer(layer_raingaugestation_10);
+        const url = {"Nominatim OSM": "https://nominatim.openstreetmap.org/search?format=geojson&addressdetails=1&",
+        "France BAN": "https://api-adresse.data.gouv.fr/search/?"}
+        var photonControl = L.control.photon({
+            url: url["Nominatim OSM"],
+            feedbackLabel: '',
+            position: 'topleft',
+            includePosition: true,
+            initial: true,
+            // resultsHandler: myHandler,
+        }).addTo(map);
+        photonControl._container.childNodes[0].style.borderRadius="10px"
+        // Create a variable to store the geoJSON data
+        var x = null;
+        // Create a variable to store the marker
+        var marker = null;
+        // Add an event listener to the Photon control to create a marker from the returned geoJSON data
+        var z = null;
+        photonControl.on('selected', function(e) {
+            console.log(photonControl.search.resultsContainer);
+            if (x != null) {
+                map.removeLayer(obj3.marker);
+                map.removeLayer(x);
+            }
+            obj2.gcd = e.choice;
+            x = L.geoJSON(obj2.gcd).addTo(map);
+            var label = typeof obj2.gcd.properties.label === 'undefined' ? obj2.gcd.properties.display_name : obj2.gcd.properties.label;
+            obj3.marker = L.marker(x.getLayers()[0].getLatLng()).bindPopup(label).addTo(map);
+            map.setView(x.getLayers()[0].getLatLng(), 17);
+            z = typeof e.choice.properties.label === 'undefined'? e.choice.properties.display_name : e.choice.properties.label;
+            console.log(e);
+            e.target.input.value = z;
+        });
+        var search = document.getElementsByClassName("leaflet-photon leaflet-control")[0];
+        search.classList.add("leaflet-control-search")
+        search.style.display = "flex";
+        search.style.backgroundColor="rgba(255,255,255,0.5)" 
+
+        // Create the new button element
+        var button = document.createElement("div");
+        button.id = "gcd-button-control";
+        button.className = "gcd-gl-btn fa fa-search search-button";
+
+        // Insert the button at the beginning of the search control
+        search.insertBefore(button, search.firstChild);
+        last = search.lastChild;
+        last.style.display = "none";
+        button.addEventListener("click", function (e) {
+            if (last.style.display === "none") {
+                last.style.display = "block";
+            } else {
+                last.style.display = "none";
+            }
+        });
+        var overlaysTree = [
+            {label: '<img src="legend/raingaugestation_10.png" /> raingauge station', layer: layer_raingaugestation_10},
+        {label: '<b>AR6</b>',  selectAllCheckbox: true, children: [
+            {label: '<img src="legend/ar6shp_9.png" /> ar6 shp', layer: layer_ar6shp_9},
+            {label: '<img src="legend/AR6_point__8.png" /> AR6_point_', layer: layer_AR6_point__8},]},
+        {label: '<b>xiao jiao xi river</b>',  selectAllCheckbox: true, children: [
+            {label: '<img src="legend/rpolxiao_7.png" /> r pol (xiao)', layer: layer_rpolxiao_7},
+            {label: '<img src="legend/rlinxiao_6.png" /> r lin (xiao)', layer: layer_rlinxiao_6},]},
+        {label: '<b>Yilan river</b>',  selectAllCheckbox: true, children: [
+            {label: '<img src="legend/rlin_5.png" /> r lin', layer: layer_rlin_5},
+            {label: '<img src="legend/rpolyi_4.png" /> r pol (yi)', layer: layer_rpolyi_4},]},
+            {label: '<img src="legend/XiaoJiaoXiArea_3.png" /> Xiao Jiao Xi Area', layer: layer_XiaoJiaoXiArea_3},
+            {label: '<img src="legend/COUNTY_MOI_1090820_2.png" /> COUNTY_MOI_1090820', layer: layer_COUNTY_MOI_1090820_2},
+            {label: "Google Maps", layer: layer_GoogleMaps_1},
+            {label: '<img src="legend/riverdirection_0.png" /> river direction ', layer: layer_riverdirection_0},]
+        var lay = L.control.layers.tree(null, overlaysTree,{
+            //namedToggle: true,
+            //selectorBack: false,
+            //closedSymbol: '&#8862; &#x1f5c0;',
+            //openedSymbol: '&#8863; &#x1f5c1;',
+            //collapseAll: 'Collapse all',
+            //expandAll: 'Expand all',
+            collapsed: false, 
+        });
+        lay.addTo(map);
+		document.addEventListener("DOMContentLoaded", function() {
+            // set new Layers List height which considers toggle icon
+            function newLayersListHeight() {
+                var layerScrollbarElement = document.querySelector('.leaflet-control-layers-scrollbar');
+                if (layerScrollbarElement) {
+                    var layersListElement = document.querySelector('.leaflet-control-layers-list');
+                    var originalHeight = layersListElement.style.height 
+                        || window.getComputedStyle(layersListElement).height;
+                    var newHeight = parseFloat(originalHeight) - 50;
+                    layersListElement.style.height = newHeight + 'px';
+                }
+            }
+            var isLayersListExpanded = true;
+            var controlLayersElement = document.querySelector('.leaflet-control-layers');
+            var toggleLayerControl = document.querySelector('.leaflet-control-layers-toggle');
+            // toggle Collapsed/Expanded and apply new Layers List height
+            toggleLayerControl.addEventListener('click', function() {
+                if (isLayersListExpanded) {
+                    controlLayersElement.classList.remove('leaflet-control-layers-expanded');
+                } else {
+                    controlLayersElement.classList.add('leaflet-control-layers-expanded');
+                }
+                isLayersListExpanded = !isLayersListExpanded;
+                newLayersListHeight()
+            });	
+			// apply new Layers List height if toggle layerstree
+			if (controlLayersElement) {
+				controlLayersElement.addEventListener('click', function(event) {
+					var toggleLayerHeaderPointer = event.target.closest('.leaflet-layerstree-header-pointer span');
+					if (toggleLayerHeaderPointer) {
+						newLayersListHeight();
+					}
+				});
+			}
+            // Collapsed/Expanded at Start to apply new height
+            setTimeout(function() {
+                toggleLayerControl.click();
+            }, 10);
+            setTimeout(function() {
+                toggleLayerControl.click();
+            }, 10);
+            // Collapsed touch/small screen
+            var isSmallScreen = window.innerWidth < 650;
+            if (isSmallScreen) {
+                setTimeout(function() {
+                    controlLayersElement.classList.remove('leaflet-control-layers-expanded');
+                    isLayersListExpanded = !isLayersListExpanded;
+                }, 500);
+            }  
+        });       
+        setBounds();
+        var i = 0;
+        layer_rpolxiao_7.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['RIVER_NAME'] !== null?String('<div style="color: #fff100; font-size: 11pt; font-weight: bold; font-family: \'微軟正黑體\', sans-serif;">' + layer.feature.properties['RIVER_NAME']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_rpolxiao_7'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        var i = 0;
+        layer_raingaugestation_10.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['name'] !== null?String('<div style="color: #323232; font-size: 11pt; font-weight: bold; font-family: \'微軟正黑體\', sans-serif;">' + layer.feature.properties['name']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_raingaugestation_10'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        resetLabels([layer_rpolxiao_7,layer_raingaugestation_10]);
+        map.on("zoomend", function(){
+            resetLabels([layer_rpolxiao_7,layer_raingaugestation_10]);
+        });
+        map.on("layeradd", function(){
+            resetLabels([layer_rpolxiao_7,layer_raingaugestation_10]);
+        });
+        map.on("layerremove", function(){
+            resetLabels([layer_rpolxiao_7,layer_raingaugestation_10]);
+        });
+        </script>
+    </body>
+</html>

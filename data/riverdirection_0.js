@@ -1,0 +1,1 @@
+var json_riverdirection_0 = {"type":"FeatureCollection","name":"riverdirection_0","crs":{"type":"name","properties":{"name":"urn:ogc:def:crs:OGC:1.3:CRS84"}},"features":[{"type":"Feature","properties":{"場域":"萬長春","x":323634.3969,"y":2731308.467},"geometry":{"type":"Point","coordinates":[121.72764161238949,24.687030065239785]}}]}
